@@ -43,11 +43,37 @@
   border-radius: 10px;
 }
 
+.greetings-container {
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  border-radius: 10px;
+  color: white;
+  text-align: center;
+}
+
 .hint {
   font-size: 2em;
   margin-bottom: 20px; /* Add a semi-transparent background */
   padding: 10px;
   border-radius: 5px;
+}
+
+.video-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  cursor: none; /* Hide the cursor */
+}
+
+.video-container iframe {
+  width: 80%;
+  height: 80%;
 }
 
 @keyframes fadeIn {
@@ -56,5 +82,18 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) and (orientation: portrait) {
+  html {
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    width: 100vh;
+    height: 100vw;
+    overflow-x: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
   }
 }

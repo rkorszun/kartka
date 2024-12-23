@@ -1,5 +1,9 @@
+/// <reference path="./types/custom.d.ts" />
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import CardGrid from './components/CardGrid';
+import VideoPlayer from './components/VideoPlayer';
+import Greetings from './components/Greetings';
 
 const initialCards = [
   { id: 1, type: 'tree' },
@@ -21,6 +25,7 @@ const App = () => {
   const [cards, setCards] = useState(shuffleArray([...initialCards]));
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [foundTrees, setFoundTrees] = useState<number>(0);
+  const [showVideo, setShowVideo] = useState<boolean>(false);
   const [showGreetings, setShowGreetings] = useState<boolean>(false);
 
   useEffect(() => {
@@ -30,7 +35,8 @@ const App = () => {
   useEffect(() => {
     if (foundTrees >= 3) {
       setTimeout(() => {
-        setShowGreetings(true);
+        setShowVideo(true);
+        requestFullscreen();
       }, 500);
     }
   }, [foundTrees]);
@@ -45,18 +51,16 @@ const App = () => {
     }
   };
 
-  const getIcon = (type: string) => {
-    switch (type) {
-      case 'tree':
-        return '🎄';
-      case 'santa':
-        return '🎅';
-      case 'sleigh':
-        return '🛷';
-      case 'snowflake':
-        return '❄️';
-      default:
-        return '🎁'; // Gift icon for default case
+  const requestFullscreen = () => {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) { // Firefox
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) { // Chrome, Safari and Opera
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { // IE/Edge
+      elem.msRequestFullscreen();
     }
   };
 
@@ -64,29 +68,11 @@ const App = () => {
     <div className="App">
       <header className="App-header">
         {showGreetings ? (
-          <div className="greetings">
-            <h1>Wesołych Świąt!</h1>
-            <p>Życzymy Wam wszystkiego najlepszego!</p>
-          </div>
+          <Greetings />
+        ) : showVideo ? (
+          <VideoPlayer onVideoEnd={() => setShowGreetings(true)} />
         ) : (
-          <>
-            <p className="hint">Znajdź 3 choinki</p>
-            <div className="card-grid">
-              {cards.map((card) => (
-                <div
-                  key={card.id}
-                  className={`card ${flippedCards.includes(card.id) ? 'flipped' : ''}`}
-                  onClick={() => handleCardClick(card.id, card.type)}
-                >
-                  {flippedCards.includes(card.id) ? (
-                    <span>{getIcon(card.type)}</span>
-                  ) : (
-                    <span>🎁</span> // Gift icon for hidden cards
-                  )}
-                </div>
-              ))}
-            </div>
-          </>
+          <CardGrid cards={cards} flippedCards={flippedCards} handleCardClick={handleCardClick} />
         )}
       </header>
     </div>
